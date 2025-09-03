@@ -24,18 +24,22 @@ app.get('/api/hello', function(req, res) {
 
 app.post("/api/shorturl", (req,res) =>{
 	let url = req.body.url.toString();
+	let id;
 	if (!(url.includes("https://") || url.includes("http://"))){
 		return res.json({"error":'invalid url'});
-	}
-	let id = myUrls.length;
-	myUrls.push({"value":url});
+	}else if (myUrls.includes(url)){
+		id = myUrls.indexOf(url);
+	}else{
+	id = myUrls.length;
+	myUrls.push(url);
+	};
 	return res.json({"original_url":url,"short_url":id});
 });
 app.get("/api/shorturl/:id", (req,res) =>{
 	let id = req.params.id;
 	if(myUrls.length < id){return res.send("invalid");}
-	let url = myUrls[id].value;
-	return res.redirect(303, myUrls[id].value);
+	let url = myUrls[id];
+	return res.redirect(303, myUrls[id]);
 	});
 
 app.listen(port, function() {
